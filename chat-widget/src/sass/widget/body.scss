@@ -17,11 +17,32 @@
     
     &__close {
         position: absolute;
-        width: 24px;
-        height: 24px;
-        right: 5px;
-        top: 5px;
+        right: 10px;
+        top: 10px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 2px solid #333;
+        background-color: #fff;
         cursor: pointer;
+    
+        &:before,
+        &:after {
+            position: absolute;
+            left: 10px;
+            top: 5px;
+            content: ' ';
+            height: 12px;
+            width: 2px;
+            background-color: #333;
+        }
+    
+        &:before {
+            transform: rotate(45deg);
+        }
+        &:after {
+            transform: rotate(-45deg);  
+        }
     }
 
     &__header {

@@ -1,0 +1,6 @@
+version: '2'
+services:
+  widget-client:
+    build: ./server
+    ports:
+    - "8081:8081"

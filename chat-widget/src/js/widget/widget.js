@@ -2,21 +2,25 @@
 
 import RandomMessage from './RandomMessage';
 import CreateElement from './CreateElement';
+import ShowMessage from './ShowMessage';
 
 export default class Widget {
-
-
 
     init(){
 
         // Класс генерации чисел 
-        let randomMessage = new RandomMessage;
+        let randomMessage = new RandomMessage();
 
         // Класс создания html элементов
-        let сreateElement = new CreateElement;
+        let сreateElement = new CreateElement();
 
+        // Класс показа сообщений в чате
+        let showMessage = new ShowMessage();
+        
+        // Создаю HTML скилет чата 
+        сreateElement.createBody();
 
-            
+        // Упрощаю поиск элемента
         function getElem(id) {
             return document.getElementById(id);
         }
@@ -24,23 +28,32 @@ export default class Widget {
         function eventOpenChat() {
             // проверка, открыт ли чат
             if (!chatOpen) {
-            //удаляю класс
-            chatId.classList.remove('spchat-hidden');
-            // меняю флаг на открыт
-            chatOpen = true;
-            // удаляю прослушку события по header чата
-            chatIdHead.removeEventListener('click', eventOpenChat);
-            // вешаю прослушку события на кпонку закрытие
-            chatIdClose.addEventListener('click', eventCloseChat);
 
-            if (messageArray.length === 0) {
-                setTimeout(function(){
-                
-                let divMsg = сreateElement.createMessage(false, 'Здравствуйте! Чем я могу вам помочь?');
-                showMessage(divMsg);
-                }, 700);
+                // удаляю класс
+                chatId.classList.remove('spchat-hidden');
 
-            }
+                // меняю флаг на открыт
+                chatOpen = true;
+
+                // удаляю прослушку события по header чата
+                chatIdHead.removeEventListener('click', eventOpenChat);
+
+                // вешаю прослушку события на кпонку закрытие
+                chatIdClose.addEventListener('click', eventCloseChat);
+
+                if (messageArray.length === 0) {
+                    setTimeout(function(){
+                    
+                        let divMsg = сreateElement.createMessage(false, 'Здравствуйте! Чем я могу вам помочь?');
+                        
+                        // Показываю сообщение
+                        showMessage.show(divMsg);
+
+                        // Добавляю в массив сообщение
+                        messageArray.push({name: 'manager', msg: 'Здравствуйте! Чем я могу вам помочь?'})
+                    }, 700);
+
+                }
 
             console.log('Open')
             }
@@ -49,30 +62,22 @@ export default class Widget {
         function eventCloseChat() {
             // проверка, открыт ли чат
             if (chatOpen) {
-            //Добавляю класс
-            chatId.classList.add('spchat-hidden');
-            // меняю флаг на закрыт
-            chatOpen = false;
-            // удаляю прослушку события на кпонку закрытие
-            chatIdClose.removeEventListener('click', eventCloseChat);;
-            // вешаю прослушку события по header чата
-            chatIdHead.addEventListener('click', eventOpenChat);
+                
+                //Добавляю класс
+                chatId.classList.add('spchat-hidden');
 
-            console.log('Close')
+                // меняю флаг на закрыт
+                chatOpen = false;
+               
+                // удаляю прослушку события на кпонку закрытие
+                chatIdClose.removeEventListener('click', eventCloseChat);
+                
+                // вешаю прослушку события по header чата
+                chatIdHead.addEventListener('click', eventOpenChat);
+
+                console.log('Close')
             }
         }
-
-        function getMessage(){
-
-        }
-
-        function showMessage(createdElem){
-            // Поиск элемента куда вставить 
-            let divMsg = getElem('spchat__massages');
-            // Вставляю в конец всех элементов в родителе
-            divMsg.appendChild(createdElem);
-        }
-
 
         function replyAi(){
             setTimeout(function(){
@@ -83,7 +88,7 @@ export default class Widget {
                 let msg = сreateElement.createMessage(false, msgText);
 
                 // показываю 
-                showMessage(msg);
+                showMessage.show(msg);
 
                 // Добавляю в массив сообщение
                 messageArray.push({name: 'manager', msg: msgText})
@@ -132,9 +137,10 @@ export default class Widget {
 
         // Событие на загрузку документа
         document.addEventListener('DOMContentLoaded', function(){
+
             setTimeout(function(){
-            eventOpenChat();
-            console.log('setTimeout - ok') 
+                eventOpenChat();
+                console.log('setTimeout - ok') 
             }, 3500);
 
             console.log('ready') 
@@ -144,11 +150,11 @@ export default class Widget {
         window.addEventListener("focus", function() {
 
             if (onlineUser) {
-            // Открыть чат автоматически по истечению 3,5с
-            setTimeout(function(){
-                eventOpenChat();
-                console.log('setTimeout - ok') 
-            }, 4500);
+                // Открыть чат автоматически по истечению 3,5с
+                setTimeout(function(){
+                    eventOpenChat();
+                    console.log('setTimeout - ok') 
+                }, 4500);
             }
             
             console.log('active') 
@@ -159,47 +165,41 @@ export default class Widget {
             onlineUser = true;
         });
 
-
-
         // Вешаю событие клик на header 
         chatIdHead.addEventListener('click', eventOpenChat);
 
-
         // Устанавливаю событие на Enter в поле textarea
         let sendMessage = getElem('sendMessage');
+
         // Вешаю событиние на Enter
         sendMessage.addEventListener('keydown', function(e){
 
             // Если нажата кнопка Enter(13)
             if (e.keyCode === 13) {
-            // Отменяю перенос строки, действие по умолчанию
-            e.preventDefault();
+                // Отменяю перенос строки, действие по умолчанию
+                e.preventDefault();
 
-            // Если сообщение пустое
-            if( this.value !== '') {
+                // Если сообщение пустое
+                if( this.value !== '') {
 
-                // Создаю html разметку с собщением 
-                let msg = сreateElement.createMessage(true, this.value);
-                // 
-                showMessage(msg);
-                messageArray.push({name: 'user', msg: this.value})
-            
-                // Ответа манагера
-                replyAi();
-            }
+                    // Создаю html разметку с собщением 
+                    let msg = сreateElement.createMessage(true, this.value);
+                    // 
+                    showMessage.show(msg);
+                    messageArray.push({name: 'user', msg: this.value})
+                
+                    // Ответа манагера
+                    replyAi();
+                }
 
-            // Автопрокрутка скролла
-            let scrollBodyMessage = getElem('spchat__body');
-            scrollBodyMessage.scrollTop = scrollBodyMessage.scrollHeight;
+                // Автопрокрутка скролла
+                let scrollBodyMessage = getElem('spchat__body');
+                scrollBodyMessage.scrollTop = scrollBodyMessage.scrollHeight;
 
-            // Сбрасываю значение поля
-            sendMessage.value = '';
-
-            
+                // Сбрасываю значение поля
+                sendMessage.value = '';
 
             }
         });
-
-
     }
 }

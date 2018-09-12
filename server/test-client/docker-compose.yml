@@ -1,0 +1,7 @@
+version: '2'
+services:
+  widget-client:
+    build: ./client-frontend
+    ports:
+    - "8080:8080"
+    

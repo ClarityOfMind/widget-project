@@ -3619,11 +3619,30 @@ a {
   overflow: hidden; }
   .spchat__close {
     position: absolute;
-    width: 24px;
-    height: 24px;
-    right: 5px;
-    top: 5px;
+    right: 10px;
+    top: 10px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid #333;
+    background-color: #fff;
     cursor: pointer; }
+    .spchat__close:before, .spchat__close:after {
+      position: absolute;
+      left: 10px;
+      top: 5px;
+      content: ' ';
+      height: 12px;
+      width: 2px;
+      background-color: #333; }
+    .spchat__close:before {
+      -webkit-transform: rotate(45deg);
+          -ms-transform: rotate(45deg);
+              transform: rotate(45deg); }
+    .spchat__close:after {
+      -webkit-transform: rotate(-45deg);
+          -ms-transform: rotate(-45deg);
+              transform: rotate(-45deg); }
   .spchat__header {
     display: -webkit-box;
     display: -webkit-flex;
