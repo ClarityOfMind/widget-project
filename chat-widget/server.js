@@ -2,7 +2,7 @@
 const http = require('http');
 const staticWeb = require('node-static');
 const WebSocketServer = require('ws');
-const calcRur = require('./backend/calc_rur');
+// const calcRur = require('./backend/calc_rur');
 
 
 //Указываем начальную директорию для сервера
@@ -26,7 +26,8 @@ webSocketServer.on('connection', ws => {
      * Полученную цифру отдаем на обаботку модулю calcRur,
      * а результат возвращаем отправителю
      */
-    ws.send(calcRur(message));
+    // ws.send(calcRur(message));
+    ws.send(console.log(message));
   });
 
   ws.on('close', () => {

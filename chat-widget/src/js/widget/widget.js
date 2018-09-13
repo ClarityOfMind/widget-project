@@ -1,5 +1,6 @@
 'use strict';
 
+import CreateStyleSheet from './CreateStyleSheet';
 import RandomMessage from './RandomMessage';
 import CreateElement from './CreateElement';
 import ShowMessage from './ShowMessage';
@@ -8,18 +9,21 @@ export default class Widget {
 
     init(){
 
+        // Класс создания и подключения <style>
+        let createStyleSheet  = new CreateStyleSheet();
+        // createStyleSheet.insertTagStyle();
+
         // Класс генерации чисел 
         let randomMessage = new RandomMessage();
 
         // Класс создания html элементов
         let сreateElement = new CreateElement();
+        // Создаю HTML скилет чата 
+        сreateElement.createBody();
 
         // Класс показа сообщений в чате
         let showMessage = new ShowMessage();
         
-        // Создаю HTML скилет чата 
-        сreateElement.createBody();
-
         // Упрощаю поиск элемента
         function getElem(id) {
             return document.getElementById(id);
