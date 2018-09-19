@@ -1,5 +1,5 @@
 # Project: widget-project
-Посмотреть проект можно по ссылке - [https://test.teatlt.ru/maket/](https://test.teatlt.ru/maket/)
+Посмотреть проект можно по ссылке - [http://test.teatlt.ru/maket/](http://test.teatlt.ru/maket/)
 
 Код JS виджета чата находится в папке `\src\js`
 

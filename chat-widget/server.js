@@ -2,8 +2,14 @@
 const http = require('http');
 const staticWeb = require('node-static');
 const WebSocketServer = require('ws');
-// const calcRur = require('./backend/calc_rur');
+// const urlParam = require('url');
 
+//
+// function getUrlParam(params){
+
+//   console.log('парам - ', params.position);
+//   console.log('парам - ', params.theme);
+// };
 
 //Указываем начальную директорию для сервера
 let file = new staticWeb.Server('./dist/dev');
@@ -11,6 +17,13 @@ let file = new staticWeb.Server('./dist/dev');
 // Запуск обычного сервера (статика) на порту 3000
 http.createServer((req, res) => {
   file.serve(req, res);
+
+    // let position = urlParam.parse(req.url, true);
+    // if (position.pathname === '/js/script.js'){
+    //   getUrlParam(position.query);
+    // };
+  
+
 }).listen(3000);
 
 // Запускаем WebSocket-сервер на порту 3001
@@ -21,13 +34,11 @@ webSocketServer.on('connection', ws => {
   console.log("новое соединение");
 
   ws.on('message', message => {
-
-    /**
-     * Полученную цифру отдаем на обаботку модулю calcRur,
-     * а результат возвращаем отправителю
-     */
-    // ws.send(calcRur(message));
-    ws.send(console.log(message));
+    console.log(message);
+    setTimeout( function(){
+      ws.send('{"id":"16179021449697941536925268929","messages":[{"time":1536925704189,"message":"Отправлено ввиде строки JSON","type":"manager"}]}');
+    },700);
+    
   });
 
   ws.on('close', () => {

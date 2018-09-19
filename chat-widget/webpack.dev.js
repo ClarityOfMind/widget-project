@@ -1,5 +1,5 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+// const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -57,12 +57,12 @@ var clientConfig = (function webpackConfig(){
 
   config.plugins = [];
 
-  config.plugins.push(
-    new HtmlWebpackPlugin({
-      h1: '«Development mode»',
-	    template: 'src/template/index.html'
-    })
-  );
+  // config.plugins.push(
+  //   new HtmlWebpackPlugin({
+  //     h1: '«Development mode»',
+	//     template: 'src/template/index.html'
+  //   })
+  // );
 
   config.plugins.push(
     new MiniCssExtractPlugin({
@@ -84,6 +84,24 @@ var clientConfig = (function webpackConfig(){
       {
         from: 'assets/fonts',
         to: 'assets/fonts/[name].[ext]',
+      }
+    ])
+  );
+
+  config.plugins.push(
+    new CopyWebpackPlugin([
+      {
+        from: 'assets/js',
+        to: 'assets/js/[name].[ext]',
+      }
+    ])
+  );
+
+  config.plugins.push(
+    new CopyWebpackPlugin([
+      {
+        from: 'assets/html',
+        to: '[name].[ext]',
       }
     ])
   );

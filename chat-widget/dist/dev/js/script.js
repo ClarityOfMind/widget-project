@@ -128,8 +128,40 @@ var _widget2 = _interopRequireDefault(_widget);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// Получаю живую колекцию <script> 
+var scripts = document.getElementsByTagName('script');
+var myScript = scripts[scripts.length - 1];
+// С помощью регулярного выражения удаляю левую часть url
+var queryString = myScript.src.replace(/^[^\?]+\??/, '');
+
+var params = parseQuery(queryString);
+
+function parseQuery(query) {
+
+    var Params = new Object();
+
+    if (!query) {
+        return Params;
+    }
+
+    var Pairs = query.split(/[;&]/);
+
+    for (var i = 0; i < Pairs.length; i++) {
+
+        var KeyVal = Pairs[i].split('=');
+
+        if (!KeyVal || KeyVal.length != 2) continue;
+
+        var key = KeyVal[0];
+        var val = KeyVal[1];
+
+        Params[key] = val;
+    }
+    return Params;
+}
+
 var widget = new _widget2.default();
-widget.init();
+widget.init(params.position);
 
 /***/ }),
 
@@ -152,89 +184,86 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var CreateElement = function () {
-    function CreateElement() {
+    function CreateElement(name, post, linkImg) {
         _classCallCheck(this, CreateElement);
+
+        var tagBody = document.body;
+
+        // Создаю <div> тела чата
+        var divChat = document.createElement('div');
+        divChat.className = 'spchat spchat-hidden';
+        divChat.setAttribute('id', 'spchat');
+
+        // Кнопка закрыть
+        var divBtnClose = document.createElement('div');
+        divBtnClose.className = 'spchat__close';
+        divBtnClose.setAttribute('id', 'spchat__close');
+        divChat.appendChild(divBtnClose);
+
+        // Секция описания менеджера
+        var divHeader = document.createElement('div');
+        divHeader.className = 'spchat__header';
+        divHeader.setAttribute('id', 'spchat__header');
+        // Обортка фото менеджера
+        var divPhotoManager = document.createElement('div');
+        divPhotoManager.className = 'spchat__photo-wrapp';
+        // Фото менеджера
+        var divPhoto = document.createElement('img');
+        divPhoto.className = 'spchat__photo';
+        divPhoto.setAttribute('src', linkImg);
+        divPhotoManager.appendChild(divPhoto);
+        divHeader.appendChild(divPhotoManager);
+        // Имя и должность менеджера
+        var divNameManager = document.createElement('div');
+        divNameManager.className = 'spchat__manager';
+        // Имя
+        var divName = document.createElement('div');
+        divName.className = 'spchat__manager-name';
+        divName.innerHTML = name;
+        divNameManager.appendChild(divName);
+        // Должность
+        var divPosition = document.createElement('div');
+        divPosition.className = 'spchat__manager-position';
+        divPosition.innerHTML = post;
+        divNameManager.appendChild(divPosition);
+        divHeader.appendChild(divNameManager);
+        divChat.appendChild(divHeader);
+
+        // Секция самого чата 
+        var divHidden2 = document.createElement('div');
+        divHidden2.className = 'spchat-hidden2';
+        var divBody = document.createElement('div');
+        divBody.className = 'spchat__body';
+        divBody.setAttribute('id', 'spchat__body');
+        // Обертка для сообщений
+        var divMsg = document.createElement('div');
+        divMsg.className = 'spchat__massages';
+        divMsg.setAttribute('id', 'spchat__massages');
+        divBody.appendChild(divMsg);
+        divHidden2.appendChild(divBody);
+
+        // Секция отправки сообщения
+        var divFooter = document.createElement('div');
+        divFooter.className = 'spchat__footer';
+        // Textarea отправки сообщения
+        var divFooterText = document.createElement('textarea');
+        divFooterText.className = 'spchat__textarea';
+        divFooterText.setAttribute('id', 'sendMessage');
+        divFooterText.setAttribute('placeholder', 'Введите сообщение и нажмите Enter');
+        divFooterText.setAttribute('autocomplete', 'off');
+        divFooterText.setAttribute('maxlength', '1000');
+        divFooter.appendChild(divFooterText);
+        divHidden2.appendChild(divFooter);
+        divChat.appendChild(divHidden2);
+
+        // Вставляю в конец всех элементов в родителе BODY
+        tagBody.appendChild(divChat);
     }
 
+    // Создание html блока сообщения
+
+
     _createClass(CreateElement, [{
-        key: 'createBody',
-        value: function createBody() {
-
-            var tagBody = document.body;
-
-            // Создаю <div> тела чата
-            var divChat = document.createElement('div');
-            divChat.className = 'spchat spchat-hidden';
-            divChat.setAttribute('id', 'spchat');
-
-            // Кнопка закрыть
-            var divBtnClose = document.createElement('div');
-            divBtnClose.className = 'spchat__close';
-            divBtnClose.setAttribute('id', 'spchat__close');
-            divChat.appendChild(divBtnClose);
-
-            // Секция описания менеджера
-            var divHeader = document.createElement('div');
-            divHeader.className = 'spchat__header';
-            divHeader.setAttribute('id', 'spchat__header');
-            // Обортка фото менеджера
-            var divPhotoManager = document.createElement('div');
-            divPhotoManager.className = 'spchat__photo-wrapp';
-            // Фото менеджера
-            var divPhoto = document.createElement('img');
-            divPhoto.className = 'spchat__photo';
-            divPhoto.setAttribute('src', 'assets/img/news-01.jpg');
-            divPhotoManager.appendChild(divPhoto);
-            divHeader.appendChild(divPhotoManager);
-            // Имя и должность менеджера
-            var divNameManager = document.createElement('div');
-            divNameManager.className = 'spchat__manager';
-            // Имя
-            var divName = document.createElement('div');
-            divName.className = 'spchat__manager-name';
-            divName.innerHTML = 'Артем Чичерин';
-            divNameManager.appendChild(divName);
-            // Должность
-            var divPosition = document.createElement('div');
-            divPosition.className = 'spchat__manager-position';
-            divPosition.innerHTML = 'DB Engineer';
-            divNameManager.appendChild(divPosition);
-            divHeader.appendChild(divNameManager);
-            divChat.appendChild(divHeader);
-
-            // Секция самого чата 
-            var divBody = document.createElement('div');
-            divBody.className = 'spchat__body';
-            divBody.setAttribute('id', 'spchat__body');
-            // Обертка для сообщений
-            var divMsg = document.createElement('div');
-            divMsg.className = 'spchat__massages';
-            divMsg.setAttribute('id', 'spchat__massages');
-            divBody.appendChild(divMsg);
-            divChat.appendChild(divBody);
-
-            // Секция отправки сообщения
-            var divFooter = document.createElement('div');
-            divFooter.className = 'spchat__footer';
-            // Textarea отправки сообщения
-            var divFooterText = document.createElement('textarea');
-            divFooterText.className = 'spchat__textarea';
-            divFooterText.setAttribute('id', 'sendMessage');
-            divFooterText.setAttribute('placeholder', 'Введите сообщение и нажмите Enter');
-            divFooterText.setAttribute('autocomplete', 'off');
-            divFooterText.setAttribute('maxlength', '1000');
-            divFooter.appendChild(divFooterText);
-            divChat.appendChild(divFooter);
-
-            // Вставляю в конец всех элементов в родителе BODY
-            tagBody.appendChild(divChat);
-
-            return divChat;
-        }
-
-        // Создание html блока сообщения
-
-    }, {
         key: 'createMessage',
         value: function createMessage(user, text) {
 
@@ -279,79 +308,136 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var CreateStyleSheet = function CreateStyleSheet() {
-    _classCallCheck(this, CreateStyleSheet);
+var CreateStyleSheet = function () {
+    function CreateStyleSheet() {
+        _classCallCheck(this, CreateStyleSheet);
 
-    // Создаю <style>
-    var styleTag = document.createElement('style');
+        // Создаю <style>
+        var styleTag = document.createElement('style');
 
-    // let styleSheet = styleTag.sheet
+        styleTag.innerHTML = '\n            .spchat { display: flex; z-index: 10;\n                flex-direction: column; position: fixed;\n                /* right: 30px; bottom: 10px;*/ width: 300px; height: 400px;\n                font-size: 14px; font-family: Arial, Helvetica, sans-serif;\n                box-shadow: 0 12px 25px 8px rgba(0, 0, 0, 0.17);\n                transition: all 0.3s cubic-bezier(0.39, 0.24, 0.21, 0.99);\n                transform-origin: 0 100%; overflow: hidden; }\n            .spchat__close { position: absolute; right: 10px; top: 10px; width: 26px;\n                height: 26px; border-radius: 50%; border: 2px solid #333;\n                background-color: #fff; cursor: pointer; box-sizing: border-box; }\n            .spchat__close:before, .spchat__close:after { position: absolute;\n                left: 10px; top: 5px; content: \'\'; height: 12px; width: 2px;\n                background-color: #333; }\n            .spchat__close:before { transform: rotate(45deg); }\n            .spchat__close:after { transform: rotate(-45deg); }\n            .spchat__header { display: flex; align-items: center; background-color: #23283c;\n                border-radius: 3px 3px 0 0; color: #f0f1f1; padding: 20px;\n                min-height: 75px; box-sizing: border-box; }\n            .spchat__photo { display: block; border-radius: 50%; margin-right: 20px;\n                height: 50px; width: 50px; }\n            .spchat__manager-name { margin-bottom: 5px; }\n            .spchat__manager-position { font-size: 12px; opacity: 0.7; }\n            .spchat__body { background-color: #fff; height: 245px; overflow-x: hidden;\n                overflow-y: scroll; padding: 10px 5px; }\n            .spchat__massage-wrap { position: relative; margin: 5px 0; }\n            .spchat__massage-wrap:after { visibility: hidden; display: block;\n                font-size: 0; content: \'\'; clear: both; height: 0; }\n            .spchat__footer { min-height: 80px; background-color: #eef1f5;\n                padding: 10px 15px; }\n            .spchat__textarea {height: 60px; padding: 5px; overflow: hidden;\n                overflow-y: auto; width: 270px; border: 1px solid #299f53;\n                border-radius: 3px; resize: none; color: #545d6b;\n                margin-bottom: 10px; line-height: 15px; box-sizing: border-box; }\n            .spchat-hidden { height: 70px; cursor: pointer; }\n            .spchat-hidden2 { transition: all 0.3s; transform-origin: top;\n                transform: scaleY(1); }\n            .spchat-hidden .spchat-hidden2 { transform: scaleY(0); }\n            .rb { right: 30px; bottom: 10px;}\n            .lb { left: 30px; bottom: 10px;}\n            .rt { right: 30px; top: 10px;}\n            .lt { left: 30px; top: 10px;}\n            .spchat__massage { color: #f0f1f1; border-radius: 3px;\n                background-color: #e4eefd; width: 85%; /*max-width: 210px;*/\n                padding: 7px 11px; margin: 5px 0; margin-right: 11px;\n                animation-duration: 0.4s; animation-timing-function: cubic-bezier(0, 0.79, 0.34, 1.38); }\n            .spchat__massage:after { content: \'\'; position: absolute; width: 0;\n                height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }\n            .spchat__massage--manager { position: relative; background-color: #3cb868;\n                float: left; text-align: left; margin-left: 11px;\n                animation-name: showMsgMng; }\n            .spchat__massage--manager:after { left: -4px; top: 5px;\n                border-right: 5px solid #3cb868; }\n            .spchat__massage--user { position: relative; background-color: #e4eefd;\n                float: right; color: #414243; text-align: right; margin-right: 11px;\n                animation-name: showMsgUser; }\n            .spchat__massage--user:after { right: -5px; top: 5px; border-left: 5px solid #e4eefd; }\n            @keyframes showMsgMng { from { left: -240px; } to { left: 0px; } }\n            @keyframes showMsgUser { from { right: -240px; } to { right: 0; } }';
 
-    //styleSheet.insertRule("\
-    // " ,0);
+        // Вставляю <style> в head
+        document.head.appendChild(styleTag);
+    }
 
-    styleTag.innerHTML = "\
-            .spchat { display: flex; \
-                flex-direction: column; position: fixed;\
-                right: 30px; bottom: 10px; width: 300px; height: 400px;\
-                font-size: 14px; font-family: Arial, Helvetica, sans-serif;\
-                box-shadow: 0 12px 25px 8px rgba(0, 0, 0, 0.17);\
-                transition: all 0.3s cubic-bezier(0.39, 0.24, 0.21, 0.99);\
-                transform-origin: 0 100%; overflow: hidden; }\
-            .spchat__close { position: absolute; right: 10px; top: 10px; width: 26px;\
-                height: 26px; border-radius: 50%; border: 2px solid #333;\
-                background-color: #fff; cursor: pointer; }\
-            .spchat__close:before, .spchat__close:after { position: absolute;\
-                left: 10px; top: 5px; content: ''; height: 12px; width: 2px;\
-                background-color: #333; }\
-            .spchat__close:before { transform: rotate(45deg); }\
-            .spchat__close:after { transform: rotate(-45deg); }\
-            .spchat__header { display: flex; align-items: center; background-color: #23283c;\
-                border-radius: 3px 3px 0 0; color: #f0f1f1; padding: 20px;\
-                min-height: 75px; }\
-            .spchat__photo { display: block; border-radius: 50%; margin-right: 20px;\
-                height: 50px; width: 50px; }\
-            .spchat__manager-name { margin-bottom: 5px; }\
-            .spchat__manager-position { font-size: 12px; opacity: 0.7; }\
-            .spchat__body { background-color: #fff; height: 245px; overflow-x: hidden;\
-                overflow-y: scroll; padding: 10px 5px; }\
-            .spchat__massage-wrap { position: relative; margin: 5px 0; }\
-            .spchat__massage-wrap:after { visibility: hidden; display: block;\
-                font-size: 0; content: ''; clear: both; height: 0; }\
-            .spchat__footer { min-height: 80px; background-color: #eef1f5;\
-                padding: 10px 15px; }\
-            .spchat__textarea {height: 60px; padding: 5px; overflow: hidden;\
-                overflow-y: auto; width: 270px; border: 1px solid #299f53;\
-                border-radius: 3px; resize: none; color: #545d6b;\
-                margin-bottom: 10px; line-height: 15px; }\
-            .spchat-hidden { bottom: -330px; cursor: pointer; }\
-            .spchat__massage { color: #f0f1f1; border-radius: 3px;\
-                background-color: #e4eefd; width: 80%; max-width: 210px;\
-                padding: 7px 11px; margin: 5px 0; margin-right: 11px;\
-                animation-duration: 0.4s; animation-timing-function: cubic-bezier(0, 0.79, 0.34, 1.38); }\
-            .spchat__massage:after { content: ''; position: absolute; width: 0;\
-                height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }\
-            .spchat__massage--manager { position: relative; background-color: #3cb868;\
-                float: left; text-align: left; margin-left: 11px;\
-                animation-name: showMsgMng; }\
-            .spchat__massage--manager:after { left: -5px; top: 5px;\
-                border-right: 5px solid #3cb868; }\
-            .spchat__massage--user { position: relative; background-color: #e4eefd;\
-                float: right; color: #414243; text-align: right; margin-right: 11px;\
-                animation-name: showMsgUser; }\
-            .spchat__massage--user:after { right: -5px; top: 5px; border-left: 5px solid #e4eefd; }\
-            @keyframes showMsgMng { from { left: -240px; } to { left: 0px; } } \
-            @keyframes showMsgUser { from { right: -240px; } to { right: 0; } }";
+    _createClass(CreateStyleSheet, [{
+        key: 'getClassPosition',
+        value: function getClassPosition(pos) {
+            var divChat = document.getElementById('spchat');
+            // let styleSheet = styleTag.sheet
 
-    console.log(styleTag);
+            switch (pos) {
+                case 'lb':
+                    // styleSheet.insertRule(" .lb {left: 30px; bottom: 10px;} ", 0);
+                    divChat.classList.add('lb');
+                    break;
+                case 'rt':
+                    // styleSheet.insertRule(" .rt { font-style: italic } ", 0);
+                    divChat.classList.add('rt');
+                    break;
+                case 'lt':
+                    // styleSheet.insertRule(" .lt { font-style: italic } ", 0);
+                    divChat.classList.add('lt');
+                    break;
+                default:
+                    console.log('Стиль по умолчанию');
+                    // styleSheet.insertRule(" .rb {right: 30px; bottom: 10px;} ", 0);
+                    divChat.classList.add('rb');
+            }
+        }
+    }]);
 
-    // Вставляю <style> в head
-    document.head.appendChild(styleTag);
-};
+    return CreateStyleSheet;
+}();
 
 exports.default = CreateStyleSheet;
+
+/***/ }),
+
+/***/ "./src/js/widget/EventOpenCloseChat.js":
+/*!*********************************************!*\
+  !*** ./src/js/widget/EventOpenCloseChat.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+            value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var EventOpenCloseChat = function () {
+            function EventOpenCloseChat() {
+                        _classCallCheck(this, EventOpenCloseChat);
+            }
+
+            _createClass(EventOpenCloseChat, [{
+                        key: 'openClose',
+                        value: function openClose(isOpen) {
+
+                                    // Выбор чата для добавления/удаления класса 
+                                    var chatId = document.getElementById('spchat');
+
+                                    // проверка, открыт ли чат
+                                    if (!isOpen) {
+
+                                                // удаляю класс
+                                                chatId.classList.remove('spchat-hidden');
+
+                                                return true;
+                                    } else {
+
+                                                // добавляю класс
+                                                chatId.classList.add('spchat-hidden');
+
+                                                return false;
+                                    }
+                        }
+            }]);
+
+            return EventOpenCloseChat;
+}();
+
+exports.default = EventOpenCloseChat;
+
+/***/ }),
+
+/***/ "./src/js/widget/Message.js":
+/*!**********************************!*\
+  !*** ./src/js/widget/Message.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Message = function Message(type, data, text) {
+    _classCallCheck(this, Message);
+
+    this.data = data;
+    this.text = text;
+    this.type = type;
+};
+
+exports.default = Message;
 
 /***/ }),
 
@@ -437,6 +523,39 @@ exports.default = ShowMessage;
 
 /***/ }),
 
+/***/ "./src/js/widget/User.js":
+/*!*******************************!*\
+  !*** ./src/js/widget/User.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _Message = __webpack_require__(/*! ./Message */ "./src/js/widget/Message.js");
+
+var _Message2 = _interopRequireDefault(_Message);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var User = function User(id, type, data, text) {
+    _classCallCheck(this, User);
+
+    this.id = id;
+    this.messages = [new _Message2.default(type, data, text)];
+};
+
+exports.default = User;
+
+/***/ }),
+
 /***/ "./src/js/widget/widget.js":
 /*!*********************************!*\
   !*** ./src/js/widget/widget.js ***!
@@ -469,6 +588,14 @@ var _ShowMessage = __webpack_require__(/*! ./ShowMessage */ "./src/js/widget/Sho
 
 var _ShowMessage2 = _interopRequireDefault(_ShowMessage);
 
+var _EventOpenCloseChat = __webpack_require__(/*! ./EventOpenCloseChat */ "./src/js/widget/EventOpenCloseChat.js");
+
+var _EventOpenCloseChat2 = _interopRequireDefault(_EventOpenCloseChat);
+
+var _User = __webpack_require__(/*! ./User */ "./src/js/widget/User.js");
+
+var _User2 = _interopRequireDefault(_User);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -476,104 +603,83 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var Widget = function () {
         function Widget() {
                 _classCallCheck(this, Widget);
+
+                // Проверка поддержки WebSocket 
+                if (!window.WebSocket) {
+                        document.body.innerHTML = 'WebSocket is not supported in this browser.';
+                }
+                // 
+                this.socket = new WebSocket('ws://localhost:3001');
+
+                // Получаю из localStorage значение
+                this.storageIdUser = localStorage.getItem('widget-user');
+                // Если нет, устанавливаю
+                if (!this.storageIdUser) {
+                        localStorage.setItem('widget-user', '' + String(Math.random()).slice(2) + Date.now());
+                        this.storageIdUser = localStorage.getItem('widget-user');
+                }
+
+                // Ищю кнопку textarea
+                this.sendMessage = document.getElementById('sendMessage');
         }
 
         _createClass(Widget, [{
                 key: 'init',
-                value: function init() {
+                value: function init(posWidget) {
+
+                        var id = void 0;
 
                         // Класс создания и подключения <style>
                         var createStyleSheet = new _CreateStyleSheet2.default();
-                        // createStyleSheet.insertTagStyle();
 
                         // Класс генерации чисел 
                         var randomMessage = new _RandomMessage2.default();
 
                         // Класс создания html элементов
-                        var сreateElement = new _CreateElement2.default();
-                        // Создаю HTML скилет чата 
-                        сreateElement.createBody();
+                        var сreateElement = new _CreateElement2.default('Артем Чичерин', 'DB Engineer', 'assets/img/news-01.jpg');
 
                         // Класс показа сообщений в чате
                         var showMessage = new _ShowMessage2.default();
 
-                        // Упрощаю поиск элемента
-                        function getElem(id) {
-                                return document.getElementById(id);
-                        }
+                        //
+                        var eventOpenCloseChat = new _EventOpenCloseChat2.default();
 
-                        function eventOpenChat() {
-                                // проверка, открыт ли чат
-                                if (!chatOpen) {
+                        //
+                        createStyleSheet.getClassPosition(posWidget);
 
-                                        // удаляю класс
-                                        chatId.classList.remove('spchat-hidden');
+                        function firstMsg(message) {
 
-                                        // меняю флаг на открыт
-                                        chatOpen = true;
-
-                                        // удаляю прослушку события по header чата
-                                        chatIdHead.removeEventListener('click', eventOpenChat);
-
-                                        // вешаю прослушку события на кпонку закрытие
-                                        chatIdClose.addEventListener('click', eventCloseChat);
-
-                                        if (messageArray.length === 0) {
-                                                setTimeout(function () {
-
-                                                        var divMsg = сreateElement.createMessage(false, 'Здравствуйте! Чем я могу вам помочь?');
-
-                                                        // Показываю сообщение
-                                                        showMessage.show(divMsg);
-
-                                                        // Добавляю в массив сообщение
-                                                        messageArray.push({ name: 'manager', msg: 'Здравствуйте! Чем я могу вам помочь?' });
-                                                }, 700);
-                                        }
-
-                                        console.log('Open');
-                                }
-                        }
-
-                        function eventCloseChat() {
-                                // проверка, открыт ли чат
-                                if (chatOpen) {
-
-                                        //Добавляю класс
-                                        chatId.classList.add('spchat-hidden');
-
-                                        // меняю флаг на закрыт
-                                        chatOpen = false;
-
-                                        // удаляю прослушку события на кпонку закрытие
-                                        chatIdClose.removeEventListener('click', eventCloseChat);
-
-                                        // вешаю прослушку события по header чата
-                                        chatIdHead.addEventListener('click', eventOpenChat);
-
-                                        console.log('Close');
-                                }
-                        }
-
-                        function replyAi() {
                                 setTimeout(function () {
-                                        // генерирую случайное число, по которому выбираю сообщение из массива
-                                        var msgText = arrayMesgAi[randomMessage.random(arrayMesgAi.length - 1)];
 
-                                        // создаю HTML сообщения
-                                        var msg = сreateElement.createMessage(false, msgText);
-
-                                        // показываю 
-                                        showMessage.show(msg);
-
+                                        var divMsg = сreateElement.createMessage(false, message);
+                                        // Показываю сообщение
+                                        showMessage.show(divMsg);
                                         // Добавляю в массив сообщение
-                                        messageArray.push({ name: 'manager', msg: msgText });
-
-                                        // Автопрокрутка скролла
-                                        var scrollBodyMessage = getElem('spchat__body');
-                                        scrollBodyMessage.scrollTop = scrollBodyMessage.scrollHeight;
-                                }, 1000);
+                                        messageArray.push({ name: 'manager', msg: message });
+                                }, 700);
                         }
+
+                        // function replyAi(){
+                        //     setTimeout(function(){
+                        //         // генерирую случайное число, по которому выбираю сообщение из массива
+                        //         let msgText = arrayMesgAi[ randomMessage.random(arrayMesgAi.length-1) ]; 
+
+                        //         // создаю HTML сообщения
+                        //         let msg = сreateElement.createMessage(false, msgText);
+
+                        //         // показываю 
+                        //         showMessage.show(msg);
+
+                        //         // Добавляю в массив сообщение
+                        //         messageArray.push({name: 'manager', msg: msgText})
+
+                        //         // Автопрокрутка скролла
+                        //         let scrollBodyMessage = document.getElementById('spchat__body');
+                        //         scrollBodyMessage.scrollTop = scrollBodyMessage.scrollHeight;
+
+                        //     }, 1000)
+
+                        // }
                         /**************START******************/
 
                         // Флаг online
@@ -581,6 +687,12 @@ var Widget = function () {
 
                         // Флаг, чат открыт/закрыт
                         var chatOpen = false;
+
+                        // Выбор кнопки закрыть для закрытия чата 
+                        var chatIdClose = document.getElementById('spchat__close');
+
+                        // Выбор header чата
+                        var chatIdHead = document.getElementById('spchat__header');
 
                         // Флаг, ответа пользователя
                         var userReply = false;
@@ -591,80 +703,129 @@ var Widget = function () {
                         // Временный массив ответов менеджера
                         var arrayMesgAi = [' Как к Вам обращаться ', ' Мне необходимо время на уточнение информации ', ' Пока жду ответа от руководства, могу рассказать анекдот ', ' Одну минуту, пожайлуста ', ' Время ожидания ответа истекло. Попробуйте обратиться позже ', ' Сообщите свой e-mail, я на него позже отвечу', ' Как с Вам связаться?', ' Прошу Вас подождать, я отвечу через несколько минут '];
 
-                        // Выбор чата для добавления класса 
-                        var chatId = getElem('spchat');
-
-                        // Выбор кнопки закрыть для закрытия чата 
-                        var chatIdClose = getElem('spchat__close');
-
-                        // Выбор header чата
-                        var chatIdHead = getElem('spchat__header');
-
                         // Событие на загрузку документа
-                        document.addEventListener('DOMContentLoaded', function () {
+                        document.addEventListener('DOMContentLoaded', listenerDOMContentLoaded);
 
+                        function listenerDOMContentLoaded() {
+
+                                // через 3,5сек выполнить 
                                 setTimeout(function () {
-                                        eventOpenChat();
-                                        console.log('setTimeout - ok');
+                                        // Если чат закрыть, то открыть
+                                        if (!chatOpen) {
+
+                                                // chatOpen = eventOpenCloseChat.openClose(chatOpen);
+                                                listenerOpenClose();
+
+                                                console.log('3.5');
+                                        }
                                 }, 3500);
+                        }
 
-                                console.log('ready');
-                        });
+                        // // Событие на активность документа
+                        // window.addEventListener("focus", function() {
 
-                        // Событие на активность документа
-                        window.addEventListener("focus", function () {
+                        //     if (onlineUser) {
+                        //         // Открыть чат автоматически по истечению 3,5с
+                        //         setTimeout(function(){
+                        //             eventOpenChat();
+                        //             console.log('setTimeout - ok') 
+                        //         }, 4500);
+                        //     }
 
-                                if (onlineUser) {
-                                        // Открыть чат автоматически по истечению 3,5с
-                                        setTimeout(function () {
-                                                eventOpenChat();
-                                                console.log('setTimeout - ok');
-                                        }, 4500);
-                                }
+                        //     console.log('active') 
+                        // });
 
-                                console.log('active');
-                        });
+                        // // Событие на уход со страницы
+                        // window.addEventListener("blur", function() {
+                        //     onlineUser = true;
+                        // });
 
-                        // Событие на уход со страницы
-                        window.addEventListener("blur", function () {
-                                onlineUser = true;
-                        });
 
                         // Вешаю событие клик на header 
-                        chatIdHead.addEventListener('click', eventOpenChat);
+                        chatIdHead.addEventListener('click', listenerOpenClose);
 
-                        // Устанавливаю событие на Enter в поле textarea
-                        var sendMessage = getElem('sendMessage');
+                        function listenerOpenClose() {
+
+                                chatOpen = eventOpenCloseChat.openClose(chatOpen);
+
+                                if (chatOpen) {
+
+                                        // удаляю прослушку события по header чата
+                                        chatIdHead.removeEventListener('click', listenerOpenClose);
+
+                                        // Вешаю прослушку события на кпонку закрытие
+                                        chatIdClose.addEventListener('click', listenerOpenClose);
+
+                                        // Пустой ли массив сообщений
+                                        if (messageArray.length === 0) {
+                                                // Функция 
+                                                firstMsg('Здравствуйте! Чем я могу вам помочь?');
+                                        }
+                                        console.log('удалить событие на header и добавлено на close');
+                                } else {
+                                        // Вешаю событие клик на header 
+                                        chatIdHead.addEventListener('click', listenerOpenClose);
+                                        // удаляю прослушку события на кпонку закрытие
+                                        chatIdClose.removeEventListener('click', listenerOpenClose);
+                                        console.log('добавить');
+                                }
+                        };
 
                         // Вешаю событиние на Enter
-                        sendMessage.addEventListener('keydown', function (e) {
+                        sendMessage.addEventListener('keydown', listenerSendMessage.bind(this));
+
+                        function listenerSendMessage(event) {
 
                                 // Если нажата кнопка Enter(13)
-                                if (e.keyCode === 13) {
-                                        // Отменяю перенос строки, действие по умолчанию
-                                        e.preventDefault();
+                                if (event.keyCode === 13) {
 
-                                        // Если сообщение пустое
-                                        if (this.value !== '') {
+                                        // Отменяю перенос строки, действие по умолчанию
+                                        event.preventDefault();
+
+                                        // Если сообщение не пустое
+                                        if (event.target.value !== '') {
 
                                                 // Создаю html разметку с собщением 
-                                                var msg = сreateElement.createMessage(true, this.value);
-                                                // 
+                                                var msg = сreateElement.createMessage(true, event.target.value);
+
+                                                // Показываю в чате
                                                 showMessage.show(msg);
-                                                messageArray.push({ name: 'user', msg: this.value });
+                                                // Добавляю в локальный массив
+                                                messageArray.push({ name: 'user', msg: event.target.value });
+
+                                                // Отправляю сообщение по websocket
+                                                var msgString = JSON.stringify(new _User2.default(this.storageIdUser, 'user', Date.now(), event.target.value));
+
+                                                this.socket.send(msgString);
 
                                                 // Ответа манагера
-                                                replyAi();
+                                                // replyAi();
                                         }
 
                                         // Автопрокрутка скролла
-                                        var scrollBodyMessage = getElem('spchat__body');
+                                        var scrollBodyMessage = document.getElementById('spchat__body');
                                         scrollBodyMessage.scrollTop = scrollBodyMessage.scrollHeight;
 
                                         // Сбрасываю значение поля
                                         sendMessage.value = '';
                                 }
-                        });
+                        }
+
+                        this.socket.onmessage = function (event) {
+
+                                var messageFromManager = JSON.parse(event.data);
+
+                                var msg = сreateElement.createMessage(false, messageFromManager.messages[0].message);
+                                showMessage.show(msg);
+
+                                // Добавляем в локальный массив переписки
+                                messageArray.push({ name: 'manager', msg: messageFromManager.messages[0].message });
+                                console.log(messageArray);
+
+                                // Автопрокрутка скролла
+                                var scrollBodyMessage = document.getElementById('spchat__body');
+                                scrollBodyMessage.scrollTop = scrollBodyMessage.scrollHeight;
+                        };
                 }
         }]);
 
