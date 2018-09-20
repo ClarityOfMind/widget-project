@@ -1,7 +1,7 @@
 <!-- Here "MI" stands for "Manager Interface" -->
 <div class="MI-container">
   <ul class="MI-userList">
-    <ng-container *ngFor="let user of users">
+    <ng-container *ngFor="let user of (users | async)">
       <li *ngIf="user.online">
         <app-user [user]="user"></app-user>
       </li>

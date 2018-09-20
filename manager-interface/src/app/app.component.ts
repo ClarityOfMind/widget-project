@@ -9,15 +9,18 @@ import { FormControl, Validators } from '@angular/forms';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  public users;
+  public users = this._websocketService.users$;
   public messageControl: FormControl;
 
   constructor (private _websocketService: WebsocketService) {
   }
 
   ngOnInit () {
-    this.users = this._websocketService.users;
+    this.users.subscribe(
+      array => console.log(array)
+    );
     this.messageControl = new FormControl('', [Validators.required]);
+    console.log(typeof this.users);
   }
 
   sendMessage () {

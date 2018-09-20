@@ -7,7 +7,7 @@ import { WebsocketService } from '../../services/websocket.service';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit, OnChanges {
+export class ChatComponent implements OnInit {
   public id: number;
   public users;
   public messages: any[];
@@ -17,20 +17,16 @@ export class ChatComponent implements OnInit, OnChanges {
     private _websocketService: WebsocketService) {
   }
 
-  ngOnChanges (changes: SimpleChanges) {
-    console.log(changes);
-  }
   ngOnInit() {
-    this.users = this._websocketService.users;
     this.activateRoute.params.subscribe(params => {
       this.id = params.id;
-      this.messages = this._websocketService.users[this.getMessages()].messages;
+      /* this.messages = this._websocketService.users[this.getMessages()].messages; */
     });
   }
 
   getMessages () {
-    for (let i = 0; i < this.users.length; i++) {
-      if (+this.id === +this.users[i].id) {
+    for (let i = 0; i < this._websocketService.users.length; i++) {
+      if (+this.id === +this._websocketService.users[i].id) {
         return i;
       }
     }

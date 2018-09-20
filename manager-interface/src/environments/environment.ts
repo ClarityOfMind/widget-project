@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  TEST_CHAT_URL: 'ws://echo.websocket.org/',
-  PROD_CHAT_URL: 'ws://vipzavarnik.ru:3001/'
+  TEST_CHAT_URL: 'ws://vipzavarnik.ru:3001/',
+  PROD_CHAT_URL: 'ws://93.171.11.254:8081'
 };
 
 /*

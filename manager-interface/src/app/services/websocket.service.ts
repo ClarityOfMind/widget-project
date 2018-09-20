@@ -9,94 +9,19 @@ import { Message } from '../models/message';
 })
 export class WebsocketService {
   public userInTouch: number;
-  public subject: Rx.Subject<MessageEvent>;
-  public messages: Subject<any>;
+  protected socket: WebSocket;
+  public MessageEvent: Subject<any> = new Subject();
+  public ServerMessages: Rx.Observable<any> = Rx.from( this.MessageEvent );
 
-  public users = [
-    {
-      id: 13,
-      online: true,
-      messages: [
-         {
-          type: 'user',
-          date: new Date(),
-          text: 'Hello my name is John'
-         },
-         {
-          type: 'manager',
-          date: new Date(),
-          text: 'How are you?'
-         }
-      ]
-    },
-    {
-      id: 14,
-      online: true,
-      messages: [
-        {
-          type: 'user',
-          date: new Date(),
-          text: 'Hello my name is Pete'
-        },
-        {
-          type: 'manager',
-          date: new Date(),
-          text: 'Fuck you!'
-        }
-      ]
-    },
-    {
-      id: 15,
-      online: true,
-      messages: [
-        {
-          type: 'user',
-          date: new Date(),
-          text: 'Hello my name is Elmo'
-        },
-        {
-          type: 'manager',
-          date: new Date(),
-          text: 'Where are you?'
-        }
-      ]
-    },
-    {
-      id: 16,
-      online: true,
-      messages: [
-        {
-          type: 'user',
-          date: new Date(),
-          text: 'Hello my name is Erica'
-        },
-        {
-          type: 'manager',
-          date: new Date(),
-          text: 'Who are you?'
-        }
-      ]
-    },
-    {
-      id: 17,
-      online: false,
-      messages: [
-        {
-          type: 'user',
-          date: new Date(),
-          text: 'Hello my name is '
-        },
-        {
-          type: 'manager',
-          date: new Date(),
-          text: 'You are offline'
-        }
-      ]
-    },
-  ];
+  /* public subject: Rx.Subject<MessageEvent>;
+  public messages: Subject<any>;
+ */
+  public users = [];
+
+  public users$: Rx.Observable<any> = Rx.of(this.users);
 
   constructor() {
-    this.messages = this.connect(environment.PROD_CHAT_URL);
+    /* this.messages = this.connect(environment.PROD_CHAT_URL);
     this.messages.subscribe(res => {
       console.log(res);
       const data = JSON.parse(res.data);
@@ -108,10 +33,26 @@ export class WebsocketService {
       };
 
       this.pushMessage(newMessage);
-    });
+    }); */
+
+    this.connect(environment.PROD_CHAT_URL);
+    this.ServerMessages.subscribe(
+      data => console.log(data)
+    );
   }
 
-  public connect(url): Rx.Subject<MessageEvent> {
+  public connect(url) {
+    this.socket = new WebSocket(url);
+
+    this.socket.onmessage = this.MessageEvent.next;
+
+    this.socket.onopen = () => {
+      console.log('Successfully connected: ' + url);
+      const usersRequest = {getAllUsers: true, id: 'manager'};
+      this.socket.send(JSON.stringify(usersRequest));
+    };
+  }
+  /* public connect(url): Rx.Subject<MessageEvent> {
     if (!this.subject) {
       this.subject = this.create(url);
       console.log('Successfully connected: ' + url);
@@ -139,7 +80,7 @@ export class WebsocketService {
       };
 
       return Rx.Subject.create(observer, observable);
-  }
+  } */
 
   setUserInTouch (id: number) {
     this.userInTouch = id;
@@ -151,9 +92,7 @@ export class WebsocketService {
       messages: new Message(text)
     };
 
-    this.messages.next(message);
-    console.log(JSON.stringify(message) );
-    console.log(JSON.stringify(this.userInTouch) );
+    this.MessageEvent.next(message);
   }
 
   pushMessage (data): void {
